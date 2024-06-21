@@ -23,6 +23,18 @@ calcTtest <- function(table, meta) {
   return(t_results)
 }
 
+#' Function to calculate Wilcoxon results
+calcWilcox <- function(table, meta) {
+  wilcox_stats<-apply(table, 1, function(x){wilcox.test(unlist(x)~meta$conditions)$stat})
+  wilcox_p<-apply(table, 1, function(x){wilcox.test(unlist(x)~meta$conditions)$p.value})
+
+  wilcox_results<-cbind(wilcox_stats, wilcox_p)
+  rownames(wilcox_results)<-rownames(table)
+  colnames(wilcox_results)<-c("stats", "pval")
+  wilcox_results<-data.frame(wilcox_results, check.names = F)
+  return(wilcox_results)
+}
+
 #' Function to calculate DESeq2 results
 calcDESeq2 <- function(table, meta) {
   #solve deseq2 all 0 issue
