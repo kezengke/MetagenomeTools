@@ -1,4 +1,5 @@
-
+library(DESeq2)
+library(edgeR)
 #' Function to normalize counts table
 normFun <- function(table) {
   n<-colSums(table)
