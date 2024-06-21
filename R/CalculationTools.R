@@ -1,5 +1,6 @@
 library(DESeq2)
 library(edgeR)
+library(coin)
 #' Function to normalize counts table
 normFun <- function(table) {
   n<-colSums(table)
@@ -26,8 +27,8 @@ calcTtest <- function(table, meta) {
 
 #' Function to calculate Wilcoxon results
 calcWilcox <- function(table, meta) {
-  wilcox_stats<-apply(table, 1, function(x){wilcox.test(unlist(x)~meta$conditions)$stat})
-  wilcox_p<-apply(table, 1, function(x){wilcox.test(unlist(x)~meta$conditions)$p.value})
+  wilcox_stats<-apply(table, 1, function(x){statistic(wilcox_test(unlist(x)~factor(meta$conditions)))})
+  wilcox_p<-apply(table, 1, function(x){pvalue(wilcox_test(unlist(x)~factor(meta$conditions)))})
 
   wilcox_results<-cbind(wilcox_stats, wilcox_p)
   rownames(wilcox_results)<-rownames(table)
