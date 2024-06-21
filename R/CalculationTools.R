@@ -38,8 +38,8 @@ calcDESeq2 <- function(table, meta) {
 
   rownames(deseq_results)<-rownames(table)
   colnames(deseq_results)<-c("stats", "pval")
-  deseq_results<-data.frame(deseq_results)
-  return(deseq_results, check.names = F)
+  deseq_results<-data.frame(deseq_results, check.names = F)
+  return(deseq_results)
 }
 
 #' Function to generate Log10 p-values and assign test statistics directions
@@ -52,7 +52,7 @@ directPFun<-function(ttest, deseq){
   deseq$p_directed<-deseq$direction*deseq$logP
   deseq$p_directed<-deseq$p_directed*-1
   directP<-cbind(ttest$p_directed, deseq$p_directed)
-  directP<-data.frame(directP)
+  directP<-data.frame(directP, check.names = F)
   # directP<-directP[!apply(directP, 1, function(row) any(is.infinite(row))), ]
-  return(directP, check.names = F)
+  return(directP)
 }
