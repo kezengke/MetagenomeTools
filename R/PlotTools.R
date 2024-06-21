@@ -13,7 +13,7 @@ processTtestRes <- function(t_results) {
 }
 
 #' Function to assign directions to log10 pvalues of wilcoxon
-processTtestRes <- function(wilcox_results) {
+processWilcoxonRes <- function(wilcox_results) {
   #creating log10 pvalues for wilcoxon results
   wilcox_results$direction<-wilcox_results$stats/abs(wilcox_results$stats)
   #log10 pvals
@@ -25,7 +25,7 @@ processTtestRes <- function(wilcox_results) {
 }
 
 #' Function to assign directions to log10 pvalues of DESeq2
-processDESeqRes <- function(deseq_results) {
+processDESeq2Res <- function(deseq_results) {
   #creating log10 pvalues for DESeq2 results
   deseq_results$direction<-deseq_results$stats/abs(deseq_results$stats)
   #log10 pvals
@@ -48,7 +48,7 @@ processDESeqRes <- function(deseq_results) {
 }
 
 #' Function to assign directions to log10 pvalues of edgeR
-processTtestRes <- function(edger_results) {
+processEdgeRRes <- function(edger_results) {
   #creating log10 pvalues for edgeR results
   edger_results$direction<-edger_results$stats/abs(edger_results$stats)
   #log10 pvals
