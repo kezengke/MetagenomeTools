@@ -12,6 +12,18 @@ processTtestRes <- function(t_results) {
   return(t_results)
 }
 
+#' Function to assign directions to log10 pvalues of wilcoxon
+processTtestRes <- function(wilcox_results) {
+  #creating log10 pvalues for wilcoxon results
+  wilcox_results$direction<-wilcox_results$stats/abs(wilcox_results$stats)
+  #log10 pvals
+  wilcox_results$logP<-log10(wilcox_results$pval)
+  #pval with direction
+  wilcox_results$p_directed<-wilcox_results$direction*wilcox_results$logP
+
+  return(wilcox_results)
+}
+
 #' Function to assign directions to log10 pvalues of DESeq2
 processDESeqRes <- function(deseq_results) {
   #creating log10 pvalues for DESeq2 results
@@ -33,6 +45,19 @@ processDESeqRes <- function(deseq_results) {
   deseq_results$p_directed[minNegIndx]<-minNegP + (minNegP * 1e-6)
 
   return(deseq_results)
+}
+
+#' Function to assign directions to log10 pvalues of edgeR
+processTtestRes <- function(edger_results) {
+  #creating log10 pvalues for edgeR results
+  edger_results$direction<-edger_results$stats/abs(edger_results$stats)
+  #log10 pvals
+  edger_results$logP<-log10(edger_results$pval)
+  #pval with direction
+  edger_results$p_directed<-edger_results$direction*edger_results$logP
+  edger_results$p_directed<-edger_results$p_directed*-1
+
+  return(edger_results)
 }
 
 #' Function to assign color code to different algorithm combo
