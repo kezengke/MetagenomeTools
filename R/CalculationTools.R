@@ -54,6 +54,22 @@ calcDESeq2 <- function(table, meta) {
   return(deseq_results)
 }
 
+#' Function to calculate edgeR results
+calcedgeR <- function(table, meta) {
+  group <- meta$condition
+  dgList <- DGEList(counts=table, group = group)
+  dgList <- calcNormFactors(dgList, method="TMM")
+  dgList <- estimateDisp(dgList)
+  et <- exactTest(dgList)
+  res <- et$table
+  edger_results<-cbind(res$logFC, res$PValue)
+
+  rownames(edger_results)<-rownames(table)
+  colnames(edger_results)<-c("stats", "pval")
+  edger_results<-data.frame(edger_results, check.names = F)
+  return(edger_results)
+}
+
 #' Function to generate Log10 p-values and assign test statistics directions
 directPFun<-function(ttest, deseq){
   ttest$direction<-ttest$stats/abs(ttest$stats)
