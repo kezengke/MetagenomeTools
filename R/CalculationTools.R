@@ -7,7 +7,7 @@ normFun <- function(table) {
     table[,j]<-table[,j]/n[j]
   }
   table<-log10(table*(sumx/ncol(table))+1)
-  table<-data.frame(table)
+  table<-data.frame(table, check.names = F)
   return(table)
 }
 
@@ -19,7 +19,7 @@ calcTtest <- function(table, meta) {
   t_results<-cbind(t_stats, t_test_p)
   rownames(t_results)<-rownames(table)
   colnames(t_results)<-c("stats", "pval")
-  t_results<-data.frame(t_results)
+  t_results<-data.frame(t_results, check.names = F)
   return(t_results)
 }
 
@@ -39,7 +39,7 @@ calcDESeq2 <- function(table, meta) {
   rownames(deseq_results)<-rownames(table)
   colnames(deseq_results)<-c("stats", "pval")
   deseq_results<-data.frame(deseq_results)
-  return(deseq_results)
+  return(deseq_results, check.names = F)
 }
 
 #' Function to generate Log10 p-values and assign test statistics directions
@@ -54,5 +54,5 @@ directPFun<-function(ttest, deseq){
   directP<-cbind(ttest$p_directed, deseq$p_directed)
   directP<-data.frame(directP)
   # directP<-directP[!apply(directP, 1, function(row) any(is.infinite(row))), ]
-  return(directP)
+  return(directP, check.names = F)
 }
