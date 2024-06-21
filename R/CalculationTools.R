@@ -55,7 +55,7 @@ calcDESeq2 <- function(table, meta) {
 }
 
 #' Function to calculate edgeR results
-calcedgeR <- function(table, meta) {
+calcEdgeR <- function(table, meta) {
   group <- meta$condition
   dgList <- DGEList(counts=table, group = group)
   dgList <- calcNormFactors(dgList, method="TMM")
