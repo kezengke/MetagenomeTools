@@ -11,7 +11,7 @@ LoadCountsT <- function(filePath) {
     countsT<-read.csv(file, header = T, row.names = 1, check.names = F)
     return(countsT)
   } else {
-    return("unsupported filetype")
+    stop("unsupported filetype")
   }
 }
 
@@ -24,7 +24,7 @@ LoadMeta <- function(filePath) {
     meta<-read.csv(file, header = T, row.names = 1, check.names = F)
     return(meta)
   } else {
-    return("unsupported filetype")
+    stop("unsupported filetype")
   }
 }
 
