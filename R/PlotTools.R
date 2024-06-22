@@ -114,7 +114,7 @@ Log10PvPPlot <- function(results1, results2, method1, method2, title = "Default 
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, col = "gray") +
     scale_color_manual(values = color_combo,
-                       labels = counts$label) +
+                       labels = sort(counts$label)) +
     labs(color = "Significant by") +
     theme_classic() +
     ggtitle(title) +
