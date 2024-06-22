@@ -106,6 +106,7 @@ Log10PvPPlot <- function(results1, results2, method1, method2, title = "Default 
     mutate(label = paste(signif, " (n=", count, ")", sep = ""))
 
   df <- merge(df, counts, by = "signif")
+  df$signif <- factor(df$signif, levels = sort(unique(df$signif)))
 
   color_combo<-get_combination(method1, method2)
 
