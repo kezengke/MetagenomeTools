@@ -1,6 +1,33 @@
 library(DESeq2)
 library(edgeR)
 library(coin)
+
+#' Load in counts table
+LoadCountsT <- function(filePath) {
+  if (grepl("\\.txt$", filePath, ignore.case = TRUE)) {
+    countsT<-read.table(filePath, sep = "\t", header = T, row.names = 1, check.names = F)
+    return(countsT)
+  } else if (grepl("\\.csv$", filename, ignore.case = TRUE)) {
+    countsT<-read.csv(file, header = T, row.names = 1, check.names = F)
+    return(countsT)
+  } else {
+    return("unsupported filetype")
+  }
+}
+
+#' Load in metadata
+LoadMeta <- function(filePath) {
+  if (grepl("\\.txt$", filePath, ignore.case = TRUE)) {
+    meta<-read.table(filePath, sep = "\t", header = T, row.names = 1, check.names = F)
+    return(meta)
+  } else if (grepl("\\.csv$", filename, ignore.case = TRUE)) {
+    meta<-read.csv(file, header = T, row.names = 1, check.names = F)
+    return(meta)
+  } else {
+    return("unsupported filetype")
+  }
+}
+
 #' Function to normalize counts table
 normFun <- function(table) {
   n<-colSums(table)
