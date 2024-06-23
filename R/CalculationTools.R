@@ -196,8 +196,8 @@ BackTestDESeq2 <- function(oldT, newT, meta) {
     #placing the taxon needs to be tested into the old counts table
     testing_frame[i, ]<-testing_taxa
 
-    res<-calcDESeq2(testing_frame[i, ], meta)
-
+    out<-calcDESeq2(testing_frame, meta)
+    res<-out[i, ]
     dRES<-rbind(dRES, res)
   }
 
