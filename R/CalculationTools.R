@@ -166,3 +166,42 @@ resampleRNORM <- function(table, meta, multiple) {
 
   return(newT)
 }
+
+#' Function to put original taxon back in resampled countsT and calculate new stats (t-test)
+BackTestTtest <- function(oldT, newT, meta) {
+  tRES<-c()
+  for (i in 1:nrow(oldT)) {
+    testing_taxa<-oldT[i, ]
+    testing_frame<-newT
+    #placing the taxon needs to be tested into the old counts table
+    testing_frame[i, ]<-testing_taxa
+
+    testing_frame<-normFun(testing_frame)
+    res<-calcTtest(testing_frame[i, ], meta)
+
+    tRES<-rbind(tRES, res)
+  }
+
+  rownames(tRES)<-rownames(oldT)
+  tRES<-data.frame(tRES)
+  return(tRES)
+}
+
+#' Function to put original taxon back in resampled countsT and calculate new stats (DESeq2)
+BackTestDESeq2 <- function(oldT, newT, meta) {
+  dRES<-c()
+  for (i in 1:nrow(oldT)) {
+    testing_taxa<-oldT[i, ]
+    testing_frame<-newT
+    #placing the taxon needs to be tested into the old counts table
+    testing_frame[i, ]<-testing_taxa
+
+    res<-calcDESeq2(testing_frame[i, ], meta)
+
+    dRES<-rbind(dRES, res)
+  }
+
+  rownames(dRES)<-rownames(oldT)
+  dRES<-data.frame(dRES)
+  return(dRES)
+}
