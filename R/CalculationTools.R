@@ -162,7 +162,7 @@ resampleRNORM <- function(table, meta, multiple) {
 
   # Replace negative values with 0 and round to integer
   newT[newT < 0] <- 0
-  newT <- data.frame(round(newT, digits = 0))
+  newT <- data.frame(round(newT, digits = 0), check.names = F)
 
   return(newT)
 }
