@@ -74,12 +74,12 @@ get_combination <- function(method1, method2) {
     `DESeq2 edgeR` = c("turquoise1", "purple", "cornflowerblue", "green"),
     `edgeR Wilcoxon` = c("turquoise1", "cornflowerblue", "green", "tan2"),
 
-    `t-test-Before t-test-After` = c("turquoise1", "green", "red", "purple"),
-    `t-test-Before DESeq2-Before` = c("turquoise1", "cornflowerblue", "green", "red"),
-    `t-test-Before DESeq2-After` = c("turquoise1", "tan2", "green", "red"),
-    `t-test-After DESeq2-Before` = c("turquoise1", "cornflowerblue", "green", "purple"),
-    `t-test-After DESeq2-After` = c("turquoise1", "tan2", "green", "purple"),
-    `DESeq2-Before DESeq2-After` = c("turquoise1", "tan2", "cornflowerblue", "green")
+    `t-test-After t-test-Before` = c("turquoise1", "green", "red", "purple"),
+    `DESeq2-Before t-test-Before` = c("turquoise1", "cornflowerblue", "green", "red"),
+    `DESeq2-After t-test-Before` = c("turquoise1", "tan2", "green", "red"),
+    `DESeq2-Before t-test-After` = c("turquoise1", "cornflowerblue", "green", "purple"),
+    `DESeq2-After t-test-After` = c("turquoise1", "tan2", "green", "purple"),
+    `DESeq2-After DESeq2-Before` = c("turquoise1", "tan2", "cornflowerblue", "green")
   )
 
   # Check for the combination and return the result
