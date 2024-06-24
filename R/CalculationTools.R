@@ -41,25 +41,26 @@ normFun <- function(table) {
 }
 
 #' Function to calculate t-test results
-safe_t_test <- function(x, y) {
-  if (sd(x) == 0 || sd(y) == 0) {
-    return(list(p.value = NA, estimate = NA, warning = "Data are essentially constant"))
-  } else {
-    return(t.test(x, y))
-  }
-}
+calcTtest <- function(table, meta) {
+  t_results <- apply(table, 1, function(x) {
+    group1 <- x[meta$conditions == unique(meta$conditions)[1]]
+    group2 <- x[meta$conditions == unique(meta$conditions)[2]]
 
-calcTtest <- function(newT, meta) {
-  unique_groups <- unique(meta)
-  group1 <- newT[, meta == unique_groups[1], drop = FALSE]
-  group2 <- newT[, meta == unique_groups[2], drop = FALSE]
+    sd_group1 <- sd(group1)
+    sd_group2 <- sd(group2)
 
-  t_results <- apply(newT, 1, function(row) {
-    x <- row[meta == unique_groups[1]]
-    y <- row[meta == unique_groups[2]]
-    test_result <- safe_t_test(x, y)
-    return(c(p.value = test_result$p.value, estimate = test_result$estimate, warning = test_result$warning))
+    if (sd_group1 == 0 | sd_group2 == 0) {
+      return(c(NA, NA))
+    } else {
+      test_result <- t.test(unlist(x) ~ meta$conditions)
+      return(c(test_result$statistic, test_result$p.value))
+    }
   })
+
+  t_results <- t(t_results)
+  rownames(t_results) <- rownames(table)
+  colnames(t_results) <- c("stats", "pval")
+  t_results <- data.frame(t_results, check.names = FALSE)
 
   return(t_results)
 }
