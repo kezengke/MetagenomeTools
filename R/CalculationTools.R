@@ -64,9 +64,6 @@ calcTtest <- function(newT, meta) {
   return(t_results)
 }
 
-# Apply the t-test
-tRES <- calcTtest(newT, meta)
-
 # calcTtest <- function(table, meta) {
 #   t_stats<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$stat})
 #   t_test_p<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$p.value})
