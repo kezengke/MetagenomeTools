@@ -41,16 +41,42 @@ normFun <- function(table) {
 }
 
 #' Function to calculate t-test results
-calcTtest <- function(table, meta) {
-  t_stats<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$stat})
-  t_test_p<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$p.value})
+safe_t_test <- function(x, y) {
+  if (sd(x) == 0 || sd(y) == 0) {
+    return(list(p.value = NA, estimate = NA, warning = "Data are essentially constant"))
+  } else {
+    return(t.test(x, y))
+  }
+}
 
-  t_results<-cbind(t_stats, t_test_p)
-  rownames(t_results)<-rownames(table)
-  colnames(t_results)<-c("stats", "pval")
-  t_results<-data.frame(t_results, check.names = F)
+calcTtest <- function(newT, meta) {
+  unique_groups <- unique(meta)
+  group1 <- newT[, meta == unique_groups[1], drop = FALSE]
+  group2 <- newT[, meta == unique_groups[2], drop = FALSE]
+
+  t_results <- apply(newT, 1, function(row) {
+    x <- row[meta == unique_groups[1]]
+    y <- row[meta == unique_groups[2]]
+    test_result <- safe_t_test(x, y)
+    return(c(p.value = test_result$p.value, estimate = test_result$estimate, warning = test_result$warning))
+  })
+
   return(t_results)
 }
+
+# Apply the t-test
+tRES <- calcTtest(newT, meta)
+
+# calcTtest <- function(table, meta) {
+#   t_stats<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$stat})
+#   t_test_p<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$p.value})
+#
+#   t_results<-cbind(t_stats, t_test_p)
+#   rownames(t_results)<-rownames(table)
+#   colnames(t_results)<-c("stats", "pval")
+#   t_results<-data.frame(t_results, check.names = F)
+#   return(t_results)
+# }
 
 #' Function to calculate Wilcoxon results
 calcWilcox <- function(table, meta) {
