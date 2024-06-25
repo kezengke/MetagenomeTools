@@ -151,6 +151,7 @@ directPFun<-function(ttest, deseq){
 
 #' Function to resample counts table with multiple (Rnorm)
 resampleRNORM <- function(table, meta, multiple) {
+  set.seed(9527)
   if (nrow(table) == 0 || nrow(meta) == 0) {
     stop("Input table or meta data frame is empty.")
   }
