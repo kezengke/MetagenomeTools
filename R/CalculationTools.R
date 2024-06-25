@@ -132,6 +132,17 @@ directPFun<-function(ttest, deseq){
   deseq$logP<-log10(deseq$pval)
   deseq$p_directed<-deseq$direction*deseq$logP
   deseq$p_directed<-deseq$p_directed*-1
+
+  # for deseq2 0 p-value outputs
+  maxPosIndx<-which(deseq$direction>0 & deseq$pval == 0)
+  minNegIndx<-which(deseq$direction<0 & deseq$pval == 0)
+
+  maxPosP<-max(deseq$p_directed[deseq$p_directed < Inf])
+  minNegP<-min(deseq$p_directed[deseq$p_directed > -Inf])
+
+  deseq$p_directed[maxPosIndx]<-maxPosP + (maxPosP * 1e-6)
+  deseq$p_directed[minNegIndx]<-minNegP + (minNegP * 1e-6)
+
   directP<-cbind(ttest$p_directed, deseq$p_directed)
   directP<-data.frame(directP, check.names = F)
   # directP<-directP[!apply(directP, 1, function(row) any(is.infinite(row))), ]
