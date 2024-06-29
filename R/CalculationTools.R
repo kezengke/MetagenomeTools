@@ -40,41 +40,41 @@ normFun <- function(table) {
   return(table)
 }
 
-#' Function to calculate t-test results
+#' #' Function to calculate t-test results
+#' calcTtest <- function(table, meta) {
+#'   t_results <- apply(table, 1, function(x) {
+#'     group1 <- x[meta$conditions == unique(meta$conditions)[1]]
+#'     group2 <- x[meta$conditions == unique(meta$conditions)[2]]
+#'
+#'     sd_group1 <- sd(group1)
+#'     sd_group2 <- sd(group2)
+#'
+#'     if (sd_group1 == 0 | sd_group2 == 0) {
+#'       return(c(NA, NA))
+#'     } else {
+#'       test_result <- t.test(unlist(x) ~ meta$conditions)
+#'       return(c(test_result$statistic, test_result$p.value))
+#'     }
+#'   })
+#'
+#'   t_results <- t(t_results)
+#'   rownames(t_results) <- rownames(table)
+#'   colnames(t_results) <- c("stats", "pval")
+#'   t_results <- data.frame(t_results, check.names = FALSE)
+#'
+#'   return(t_results)
+#' }
+
 calcTtest <- function(table, meta) {
-  t_results <- apply(table, 1, function(x) {
-    group1 <- x[meta$conditions == unique(meta$conditions)[1]]
-    group2 <- x[meta$conditions == unique(meta$conditions)[2]]
+  t_stats<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$stat})
+  t_test_p<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$p.value})
 
-    sd_group1 <- sd(group1)
-    sd_group2 <- sd(group2)
-
-    if (sd_group1 == 0 | sd_group2 == 0) {
-      return(c(NA, NA))
-    } else {
-      test_result <- t.test(unlist(x) ~ meta$conditions)
-      return(c(test_result$statistic, test_result$p.value))
-    }
-  })
-
-  t_results <- t(t_results)
-  rownames(t_results) <- rownames(table)
-  colnames(t_results) <- c("stats", "pval")
-  t_results <- data.frame(t_results, check.names = FALSE)
-
+  t_results<-cbind(t_stats, t_test_p)
+  rownames(t_results)<-rownames(table)
+  colnames(t_results)<-c("stats", "pval")
+  t_results<-data.frame(t_results, check.names = F)
   return(t_results)
 }
-
-# calcTtest <- function(table, meta) {
-#   t_stats<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$stat})
-#   t_test_p<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$p.value})
-#
-#   t_results<-cbind(t_stats, t_test_p)
-#   rownames(t_results)<-rownames(table)
-#   colnames(t_results)<-c("stats", "pval")
-#   t_results<-data.frame(t_results, check.names = F)
-#   return(t_results)
-# }
 
 #' Function to calculate Wilcoxon results
 calcWilcox <- function(table, meta) {
