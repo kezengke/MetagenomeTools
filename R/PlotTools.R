@@ -148,7 +148,7 @@ TaxaCorHistogram <- function(table, title = "Default title") {
 
 #' Function to plot p-value histograms
 PvalHistogram <- function(table, histoCol, title = "Default title") {
-  p<-ggplot(data = table, aes(x = corVal)) +
+  p<-ggplot(data = table, aes(x = pval)) +
     geom_histogram(binwidth = 0.05, fill = histoCol, color = "black", alpha = 0.7) +
     labs(x = "p-value",
          y = "Frequency",
