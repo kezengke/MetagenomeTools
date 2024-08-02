@@ -245,5 +245,5 @@ BackTestDESeq2 <- function(oldT, newT, meta) {
 CalcKSpval <- function(pvalues) {
   ks_results<-ks.test(pvalues, "pnorm")
 
-  return(ks_results$p.value)
+  format(ks_result$p.value, scientific = TRUE)
 }
