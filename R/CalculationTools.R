@@ -243,7 +243,7 @@ BackTestDESeq2 <- function(oldT, newT, meta) {
 
 #' Function to calculate if data distribution is uniform
 CalcKSpval <- function(pvalues) {
-  ks_results<-ks.test(pvalues, "punif")
+  ks_result<-ks.test(pvalues, "punif")
 
   format(ks_result$p.value, scientific = TRUE)
 }
