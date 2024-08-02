@@ -240,3 +240,10 @@ BackTestDESeq2 <- function(oldT, newT, meta) {
   dRES<-data.frame(dRES)
   return(dRES)
 }
+
+#' Function to calculate if data distribution is uniform
+CalcKSpval <- function(pvalues) {
+  ks_results<-ks.test(pvalues, "pnorm")
+
+  return(ks_results$p.value)
+}
