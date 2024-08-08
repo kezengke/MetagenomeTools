@@ -241,9 +241,21 @@ BackTestDESeq2 <- function(oldT, newT, meta) {
   return(dRES)
 }
 
-#' Function to calculate if data distribution is uniform
+#' Function to calculate KS test results from uniform distribution
 CalcKSpval <- function(pvalues) {
   ks_result<-ks.test(pvalues, "punif")
 
   format(ks_result$p.value, scientific = TRUE)
+}
+
+#' Function to calculate Chi-squared test results from uniform distribution
+CalcChiSquaredPval <- function(pvalues) {
+  numBins<-ceiling(1/0.05)
+  breaks<-seq(0, 1, 0.05)
+  observedCounts<-hist(pvalues, breaks, plot = F)$counts
+  totalPvals<-length(pvalues)
+  expectedCounts<-rep(totalPvals/numBins, numBins)
+  pval<-chisq.test(observedCounts, p = rep(1/numBins, numBins))$p.value
+
+  return(pval)
 }
