@@ -132,12 +132,12 @@ Log10PvPPlot <- function(results1, results2, method1, method2, title = "Default 
 }
 
 #' Function to plot taxa correlation histograms
-TaxaCorHistogram <- function(table, title = "Default title") {
+TaxaCorHistogram <- function(table, title = "Default title", plotCol) {
   spearCor<-cor(t(table), method = "spearman")
   corVal<-spearCor[lower.tri(spearCor, diag = F)]
 
   p<-ggplot(data = data.frame(corVal), aes(x = corVal)) +
-    geom_histogram(binwidth = 0.05, fill = "olivedrab3", color = "black", alpha = 0.7) +
+    geom_histogram(binwidth = 0.05, fill = plotCol, color = "black", alpha = 0.7) +
     labs(x = "Spearman Correlation",
          y = "Frequency",
          title = title) +
