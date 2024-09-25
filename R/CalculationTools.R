@@ -202,6 +202,58 @@ resampleRNORM <- function(table, meta, multiple) {
   return(newT)
 }
 
+#' Function to resample counts table with multiple (Rnorm)
+resampleWholeTaxonRNORM <- function(table, meta, multiple) {
+  if (nrow(table) == 0 || nrow(meta) == 0) {
+    stop("Input table or meta data frame is empty.")
+  }
+
+  groups <- unique(meta$conditions)
+  if (length(groups) != 2) {
+    stop("The function currently supports exactly two groups.")
+  }
+
+  # group1 <- groups[1]
+  # group2 <- groups[2]
+
+  # Function to calculate mean and sd for each group
+  calculateMeanSd <- function(z) {
+    # g1 <- unlist(z[meta$conditions == group1])
+    # g2 <- unlist(z[meta$conditions == group2])
+    c(meanTotal = mean(z), sdTotal = sd(z))
+  }
+
+  # Apply the function to each row of the table and combine results into a data frame
+  MeanSd_table <- t(apply(table, 1, calculateMeanSd))
+  MeanSd_table <- as.data.frame(MeanSd_table)
+  rownames(MeanSd_table) <- rownames(table)
+
+  # Function to generate resampled counts for each row
+  resample_counts <- function(row_index) {
+    z <- table[row_index,]
+    # g1 <- unlist(z[meta$conditions == group1])
+    # g2 <- unlist(z[meta$conditions == group2])
+
+    nz <- rnorm(n = length(z), mean = MeanSd_table[row_index, "meanTotal"], sd = sqrt(multiple * (MeanSd_table[row_index, "sdTotal"])^2))
+
+    nz
+  }
+
+  # Apply the resampling function to each row
+  newT <- t(sapply(seq_len(nrow(table)), resample_counts))
+
+  # Set column and row names
+  colnames(newT) <- c(rownames(meta)[meta$conditions == group1], rownames(meta)[meta$conditions == group2])
+  newT <- newT[, colnames(table)]
+  rownames(newT) <- rownames(table)
+
+  # Replace negative values with 0 and round to integer
+  newT[newT < 0] <- 0
+  newT <- data.frame(round(newT, digits = 0), check.names = F)
+
+  return(newT)
+}
+
 #' Function to put original taxon back in resampled countsT and calculate new stats (t-test)
 BackTestTtest <- function(oldT, newT, meta) {
   tRES<-c()
