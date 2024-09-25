@@ -202,7 +202,7 @@ resampleRNORM <- function(table, meta, multiple) {
   return(newT)
 }
 
-#' Function to resample counts table with multiple (Rnorm)
+#' Function to resample counts table (whole taxon) with multiple (Rnorm)
 resampleWholeTaxonRNORM <- function(table, meta, multiple) {
   if (nrow(table) == 0 || nrow(meta) == 0) {
     stop("Input table or meta data frame is empty.")
@@ -213,13 +213,8 @@ resampleWholeTaxonRNORM <- function(table, meta, multiple) {
     stop("The function currently supports exactly two groups.")
   }
 
-  # group1 <- groups[1]
-  # group2 <- groups[2]
-
   # Function to calculate mean and sd for each group
   calculateMeanSd <- function(z) {
-    # g1 <- unlist(z[meta$conditions == group1])
-    # g2 <- unlist(z[meta$conditions == group2])
     c(meanTotal = mean(z), sdTotal = sd(z))
   }
 
@@ -231,8 +226,6 @@ resampleWholeTaxonRNORM <- function(table, meta, multiple) {
   # Function to generate resampled counts for each row
   resample_counts <- function(row_index) {
     z <- table[row_index,]
-    # g1 <- unlist(z[meta$conditions == group1])
-    # g2 <- unlist(z[meta$conditions == group2])
 
     nz <- rnorm(n = length(z), mean = MeanSd_table[row_index, "meanTotal"], sd = sqrt(multiple * (MeanSd_table[row_index, "sdTotal"])^2))
 
