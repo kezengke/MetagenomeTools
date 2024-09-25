@@ -208,11 +208,6 @@ resampleWholeTaxonRNORM <- function(table, meta, multiple) {
     stop("Input table or meta data frame is empty.")
   }
 
-  groups <- unique(meta$conditions)
-  if (length(groups) != 2) {
-    stop("The function currently supports exactly two groups.")
-  }
-
   # Function to calculate mean and sd for each group
   calculateMeanSd <- function(z) {
     c(meanTotal = mean(z), sdTotal = sd(z))
@@ -236,7 +231,7 @@ resampleWholeTaxonRNORM <- function(table, meta, multiple) {
   newT <- t(sapply(seq_len(nrow(table)), resample_counts))
 
   # Set column and row names
-  colnames(newT) <- c(rownames(meta)[meta$conditions == group1], rownames(meta)[meta$conditions == group2])
+  colnames(newT) <- colnames(table)
   newT <- newT[, colnames(table)]
   rownames(newT) <- rownames(table)
 
