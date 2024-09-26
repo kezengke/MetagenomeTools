@@ -42,7 +42,6 @@ normFun <- function(table) {
 
 #' Function to calculate t-test results (for resampling down)
 calcTtest2 <- function(table, meta) {
-  table<-normFun(table)
   t_results <- apply(table, 1, function(x) {
     group1 <- x[meta$conditions == unique(meta$conditions)[1]]
     group2 <- x[meta$conditions == unique(meta$conditions)[2]]
@@ -67,7 +66,6 @@ calcTtest2 <- function(table, meta) {
 }
 
 calcTtest <- function(table, meta) {
-  table<-normFun(table)
   t_stats<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$stat})
   t_test_p<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$p.value})
 
@@ -80,7 +78,6 @@ calcTtest <- function(table, meta) {
 
 #' Function to calculate Wilcoxon results
 calcWilcox <- function(table, meta) {
-  table<-normFun(table)
   wilcox_stats<-apply(table, 1, function(x){statistic(wilcox_test(unlist(x)~factor(meta$conditions)))})
   wilcox_p<-apply(table, 1, function(x){pvalue(wilcox_test(unlist(x)~factor(meta$conditions)))})
 
