@@ -80,6 +80,7 @@ calcTtest <- function(table, meta) {
 
 #' Function to calculate Wilcoxon results
 calcWilcox <- function(table, meta) {
+  table<-normFun(table)
   wilcox_stats<-apply(table, 1, function(x){statistic(wilcox_test(unlist(x)~factor(meta$conditions)))})
   wilcox_p<-apply(table, 1, function(x){pvalue(wilcox_test(unlist(x)~factor(meta$conditions)))})
 
