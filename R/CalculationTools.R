@@ -1,6 +1,7 @@
 library(DESeq2)
 library(edgeR)
 library(coin)
+library(ALDEx2)
 
 #' Load in counts table
 LoadCountsT <- function(filePath) {
@@ -121,6 +122,34 @@ calcEdgeR <- function(table, meta) {
   colnames(edger_results)<-c("stats", "pval")
   edger_results<-data.frame(edger_results, check.names = F)
   return(edger_results)
+}
+
+#' Function to calculate ALDEx2 t-test results
+calcALDEx2Ttest <- function(table, meta) {
+  CLR<-aldex.clr(table, meta$conditions, mc.samples = 128, denom = "all", verbose = F, gamma = 0.5)
+  results<-aldex.ttest(CLR, hist.plot = F, paired.test = F, verbose = F)
+  effectSizes<-aldex.effect(CLR)
+
+  aldex2T_results<-cbind(effectSizes$diff.btw, results$we.ep)
+
+  rownames(aldex2T_results)<-rownames(table)
+  colnames(aldex2T_results)<-c("stats", "pval")
+  aldex2T_results<-data.frame(aldex2T_results, check.names = F)
+  return(aldex2T_results)
+}
+
+#' Function to calculate ALDEx2 wilcoxon results
+calcALDEx2Wilcoxon <- function(table, meta) {
+  CLR<-aldex.clr(table, meta$conditions, mc.samples = 128, denom = "all", verbose = F, gamma = 0.5)
+  results<-aldex.ttest(CLR, hist.plot = F, paired.test = F, verbose = F)
+  effectSizes<-aldex.effect(CLR)
+
+  aldex2W_results<-cbind(effectSizes$diff.btw, results$wi.ep)
+
+  rownames(aldex2W_results)<-rownames(table)
+  colnames(aldex2W_results)<-c("stats", "pval")
+  aldex2W_results<-data.frame(aldex2W_results, check.names = F)
+  return(aldex2W_results)
 }
 
 #' Function to generate Log10 p-values and assign test statistics directions
