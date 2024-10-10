@@ -68,7 +68,7 @@ processALDEx2Res <- function(aldex2_results) {
   aldex2_results$logP<-log10(aldex2_results$pval)
   #pval with direction
   aldex2_results$p_directed<-aldex2_results$direction*aldex2_results$logP
-  # aldex2_results$p_directed<-aldex2_results$p_directed*-1
+  aldex2_results$p_directed<-aldex2_results$p_directed*-1
 
   return(aldex2_results)
 }
