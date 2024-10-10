@@ -60,37 +60,6 @@ processEdgeRRes <- function(edger_results) {
   return(edger_results)
 }
 
-#' Function to assign color code to different algorithm combo
-get_combination <- function(method1, method2) {
-  # Create a sorted vector to ignore the order of input methods
-  methods <- sort(c(method1, method2))
-
-  # Define all possible combinations and their respective results
-  combinations <- list(
-    `DESeq2 t-test` = c("turquoise1", "purple", "green", "red"),
-    `t-test Wilcoxon` = c("turquoise1", "green", "red", "tan2"),
-    `edgeR t-test` = c("turquoise1", "cornflowerblue", "green", "red"),
-    `DESeq2 Wilcoxon` = c("turquoise1", "purple", "green", "tan2"),
-    `DESeq2 edgeR` = c("turquoise1", "purple", "cornflowerblue", "green"),
-    `edgeR Wilcoxon` = c("turquoise1", "cornflowerblue", "green", "tan2"),
-
-    `t-test-After t-test-Before` = c("turquoise1", "green", "red", "purple"),
-    `DESeq2-Before t-test-Before` = c("turquoise1", "cornflowerblue", "green", "red"),
-    `DESeq2-After t-test-Before` = c("turquoise1", "tan2", "green", "red"),
-    `DESeq2-Before t-test-After` = c("turquoise1", "cornflowerblue", "green", "purple"),
-    `DESeq2-After t-test-After` = c("turquoise1", "tan2", "green", "purple"),
-    `DESeq2-After DESeq2-Before` = c("turquoise1", "tan2", "cornflowerblue", "green")
-  )
-
-  # Check for the combination and return the result
-  for (combo in names(combinations)) {
-    if (all(methods == unlist(strsplit(combo, " ")))) {
-      return(combinations[[combo]])
-    }
-  }
-
-  return("Invalid combination")
-}
 
 #' Function to plot Log10 p-values
 Log10PvPPlot <- function(results1, results2, method1, method2, title = "Default title") {
@@ -113,15 +82,22 @@ Log10PvPPlot <- function(results1, results2, method1, method2, title = "Default 
     mutate(label = paste(signif, " (n=", count, ")", sep = ""))
 
   df <- merge(df, counts, by = "signif")
-  df$signif <- factor(df$signif, levels = sort(unique(df$signif)))
 
-  color_combo<-get_combination(method1, method2)
+  color_category<-c("t-test" = "#c44c52",
+                    "Wilcoxon" = "#c8892b",
+                    "DESeq2" = "#ebd374",
+                    "edgeR" = "#94c6d4",
+                    "ALDEx2t-test" = "#5d879e",
+                    "ALDEx2Wilcoxon" = "#4863aa",
+                    "Both" = "#a24c97",
+                    "Neither" = "#cdda73")
 
-  p <- ggplot(df, aes(x = results1Dp, y = results2Dp, color = signif)) +
-    geom_point(alpha = 0.3) +
+  df$plotColor<-color_category[df$signif]
+
+  p<-ggplot(df, aes(x = results1Dp, y = results2Dp)) +
+    geom_point(aes(color = label), alpha = 0.4, size = 3) +
     geom_abline(intercept = 0, slope = 1, col = "gray") +
-    scale_color_manual(values = color_combo,
-                       labels = sort(counts$label)) +
+    scale_color_manual(values = setNames(df$plotColor, df$label)) +
     labs(color = "Significant by") +
     theme_classic() +
     ggtitle(title) +
