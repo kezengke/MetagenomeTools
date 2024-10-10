@@ -60,6 +60,19 @@ processEdgeRRes <- function(edger_results) {
   return(edger_results)
 }
 
+#' Function to assign directions to log10 pvalues of edgeR
+processALDEx2Res <- function(aldex2_results) {
+  #creating log10 pvalues for edgeR results
+  aldex2_results$direction<-aldex2_results$stats/abs(aldex2_results$stats)
+  #log10 pvals
+  aldex2_results$logP<-log10(aldex2_results$pval)
+  #pval with direction
+  aldex2_results$p_directed<-aldex2_results$direction*aldex2_results$logP
+  # aldex2_results$p_directed<-aldex2_results$p_directed*-1
+
+  return(aldex2_results)
+}
+
 
 #' Function to plot Log10 p-values
 Log10PvPPlot <- function(results1, results2, method1, method2, title = "Default title") {
