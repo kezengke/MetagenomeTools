@@ -90,7 +90,13 @@ Log10PvPPlot <- function(results1, results2, method1, method2, title = "Default 
                     "ALDEx2t-test" = "#5d879e",
                     "ALDEx2Wilcoxon" = "#4863aa",
                     "Both" = "#a24c97",
-                    "Neither" = "#cdda73")
+                    "Neither" = "#cdda73",
+
+                    "t-test-Before" = "#c44c52",
+                    "t-test-After" = "#94c6d4",
+                    "DESeq2-Before" = "#ebd374",
+                    "DESeq2-After" = "#4863aa"
+                    )
 
   df$plotColor<-color_category[df$signif]
 
