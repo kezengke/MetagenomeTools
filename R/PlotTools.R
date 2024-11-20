@@ -132,7 +132,7 @@ TaxaCorHistogram <- function(table, title = "Default title", plotCol) {
   corVal<-spearCor[lower.tri(spearCor, diag = F)]
 
   p<-ggplot(data = data.frame(corVal), aes(x = corVal)) +
-    geom_histogram(binwidth = 0.1, fill = plotCol, color = "black", alpha = 0.7) +
+    geom_histogram(binwidth = 0.5, fill = plotCol, color = "black", alpha = 0.7) +
     labs(x = "Spearman Correlation",
          y = "Frequency",
          title = title) +
