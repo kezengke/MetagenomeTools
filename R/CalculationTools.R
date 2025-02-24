@@ -178,6 +178,31 @@ directPFun<-function(ttest, deseq){
   return(directP)
 }
 
+#' Function to calculate Mean and Std
+calcMeanStd<- function(table, meta) {
+  groups <- unique(meta$conditions)
+  if (length(groups) != 2) {
+    stop("The function currently supports exactly two groups.")
+  }
+
+  group1 <- groups[1]
+  group2 <- groups[2]
+
+  # Function to calculate mean and sd for each group
+  calculateMeanSd <- function(z) {
+    g1 <- unlist(z[meta$conditions == group1])
+    g2 <- unlist(z[meta$conditions == group2])
+    c(mean1 = mean(g1), mean2 = mean(g2), sd1 = sd(g1), sd2 = sd(g2))
+  }
+
+  # Apply the function to each row of the table and combine results into a data frame
+  MeanSd_table <- t(apply(table, 1, calculateMeanSd))
+  MeanSd_table <- as.data.frame(MeanSd_table)
+  rownames(MeanSd_table) <- rownames(table)
+
+  return(MeanSd_table)
+}
+
 #' Function to resample counts table with multiple (Rnorm)
 resampleRNORM <- function(table, meta, multiple) {
   if (nrow(table) == 0 || nrow(meta) == 0) {
