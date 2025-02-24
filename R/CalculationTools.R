@@ -224,8 +224,10 @@ resampleRNORM <- function(table, meta, multiple) {
   newT <- newT[, colnames(table)]
   rownames(newT) <- rownames(table)
 
-  # Replace negative values with 0 and round to integer
-  newT[newT < 0] <- 0
+  # # Replace negative values with 0 and round to integer
+  # newT[newT < 0] <- 0
+  # Add smallest number to whole counts table
+  newT<-newT + abs(min(newT))
   newT <- data.frame(round(newT, digits = 0), check.names = F)
 
   return(newT)
@@ -264,8 +266,10 @@ resampleWholeTaxonRNORM <- function(table, meta, multiple) {
   newT <- newT[, colnames(table)]
   rownames(newT) <- rownames(table)
 
-  # Replace negative values with 0 and round to integer
-  newT[newT < 0] <- 0
+  # # Replace negative values with 0 and round to integer
+  # newT[newT < 0] <- 0
+  # Add smallest number to whole counts table
+  newT<-newT + abs(min(newT))
   newT <- data.frame(round(newT, digits = 0), check.names = F)
 
   return(newT)
