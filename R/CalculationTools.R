@@ -113,14 +113,28 @@ calcEdgeR <- function(table, meta) {
   group <- meta$condition
   dgList <- DGEList(counts=table, group = group)
   dgList <- calcNormFactors(dgList, method="TMM")
-  dgList <- estimateDisp(dgList)
-  et <- exactTest(dgList)
-  res <- et$table
-  edger_results<-cbind(res$logFC, res$PValue)
 
-  rownames(edger_results)<-rownames(table)
-  colnames(edger_results)<-c("stats", "pval")
-  edger_results<-data.frame(edger_results, check.names = F)
+  # Wrap estimateDisp in tryCatch to handle errors
+  dgList <- tryCatch({
+    estimateDisp(dgList)
+  }, error = function(e) {
+    # If error occurs, return NA instead of running estimateDisp
+    return(NULL)
+  })
+
+  # If dgList is NULL, skip the remaining lines and create edger_results as NA
+  if (is.null(dgList)) {
+    edger_results <- matrix(NA, nrow = nrow(table), ncol = 2)
+  } else {
+    et <- exactTest(dgList)
+    res <- et$table
+    edger_results <- cbind(res$logFC, res$PValue)
+  }
+
+  rownames(edger_results) <- rownames(table)
+  colnames(edger_results) <- c("stats", "pval")
+  edger_results <- data.frame(edger_results, check.names = F)
+
   return(edger_results)
 }
 
