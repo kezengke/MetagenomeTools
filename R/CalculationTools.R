@@ -98,9 +98,22 @@ calcDESeq2 <- function(table, meta) {
   dds1 <- DESeqDataSetFromMatrix(countData=table,
                                  colData=meta,
                                  design=~conditions)
-  dds2 <- DESeq(dds1)
-  res <- results(dds2, cooksCutoff=FALSE, independentFiltering=FALSE)
-  deseq_results<-cbind(res$stat, res$pvalue)
+
+  # Wrap DESeq in tryCatch to handle errors
+  dds2 <- tryCatch({
+    DESeq(dds1)
+  }, error = function(e) {
+    # If error occurs, return NA instead of running DESeq
+    return(NULL)
+  })
+
+  # If dds2 is NULL, skip the remaining lines and create deseq_results as NA
+  if (is.null(dds2)) {
+    deseq_results <- matrix(NA, nrow = nrow(table), ncol = 2)
+  } else {
+    res <- results(dds2, cooksCutoff=FALSE, independentFiltering=FALSE)
+    deseq_results<-cbind(res$stat, res$pvalue)
+  }
 
   rownames(deseq_results)<-rownames(table)
   colnames(deseq_results)<-c("stats", "pval")
