@@ -290,7 +290,8 @@ resampleWholeTaxonRNORM <- function(table, meta, multiple) {
   if (nrow(table) == 0 || nrow(meta) == 0) {
     stop("Input table or meta data frame is empty.")
   }
-
+  # log transform dataset before resample
+  table<-log10(table+1)
   # Function to calculate mean and sd for each group
   calculateMeanSd <- function(z) {
     c(meanTotal = mean(z), sdTotal = sd(z))
@@ -318,10 +319,9 @@ resampleWholeTaxonRNORM <- function(table, meta, multiple) {
   newT <- newT[, colnames(table)]
   rownames(newT) <- rownames(table)
 
-  # # Replace negative values with 0 and round to integer
-  # newT[newT < 0] <- 0
-  # Add smallest number to whole counts table
-  newT<-newT + abs(min(newT))
+  # newT<-newT + abs(min(newT))
+  # de-log counts table
+  newT<- 10 ^ (newT) - 1
   newT <- data.frame(round(newT, digits = 0), check.names = F)
 
   return(newT)
