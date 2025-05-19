@@ -243,7 +243,8 @@ resampleRNORM <- function(table, meta, multiple) {
 
   group1 <- groups[1]
   group2 <- groups[2]
-
+  # log transform dataset before resample
+  table<-log10(table+1)
   # Function to calculate mean and sd for each group
   calculateMeanSd <- function(z) {
     g1 <- unlist(z[meta$conditions == group1])
@@ -270,16 +271,15 @@ resampleRNORM <- function(table, meta, multiple) {
 
   # Apply the resampling function to each row
   newT <- t(sapply(seq_len(nrow(table)), resample_counts))
-
+  # de-log counts table
+  newT<- 10 ^ (newT) - 1
   # Set column and row names
   colnames(newT) <- c(rownames(meta)[meta$conditions == group1], rownames(meta)[meta$conditions == group2])
   newT <- newT[, colnames(table)]
   rownames(newT) <- rownames(table)
 
-  # # Replace negative values with 0 and round to integer
-  # newT[newT < 0] <- 0
-  # Add smallest number to whole counts table
-  newT<-newT + abs(min(newT))
+  # newT<-newT + abs(min(newT))
+
   newT <- data.frame(round(newT, digits = 0), check.names = F)
 
   return(newT)
