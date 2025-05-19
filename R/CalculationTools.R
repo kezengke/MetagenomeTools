@@ -273,12 +273,11 @@ resampleRNORM <- function(table, meta, multiple) {
   newT <- t(sapply(seq_len(nrow(table)), resample_counts))
   # de-log counts table
   newT<- 10 ^ (newT) - 1
+  newT<-newT + abs(min(newT))
   # Set column and row names
   colnames(newT) <- c(rownames(meta)[meta$conditions == group1], rownames(meta)[meta$conditions == group2])
   newT <- newT[, colnames(table)]
   rownames(newT) <- rownames(table)
-
-  # newT<-newT + abs(min(newT))
 
   newT <- data.frame(round(newT, digits = 0), check.names = F)
 
@@ -319,9 +318,9 @@ resampleWholeTaxonRNORM <- function(table, meta, multiple) {
   newT <- newT[, colnames(table)]
   rownames(newT) <- rownames(table)
 
-  # newT<-newT + abs(min(newT))
   # de-log counts table
   newT<- 10 ^ (newT) - 1
+  newT<-newT + abs(min(newT))
   newT <- data.frame(round(newT, digits = 0), check.names = F)
 
   return(newT)
