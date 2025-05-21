@@ -91,6 +91,8 @@ calcWilcox <- function(table, meta) {
 
 #' Function to calculate DESeq2 results
 calcDESeq2 <- function(table, meta) {
+  table<-as.data.frame(table)  # just in case it's a list of vectors
+  table<-as.matrix(table)
   table<-round(table)      # keeps numeric type, avoids overflow
   storage.mode(table)<-"integer"
   #solve deseq2 all 0 issue
