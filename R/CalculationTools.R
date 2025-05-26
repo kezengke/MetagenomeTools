@@ -235,7 +235,7 @@ calcMeanStd<- function(table, meta) {
 }
 
 #' Function to resample counts table with multiple (Rnorm)
-resampleRNORM <- function(table, meta, multiple) {
+resampleRNORM <- function(table, meta, multiple, lower = 0, upper = 1e6) {
   if (nrow(table) == 0 || nrow(meta) == 0) {
     stop("Input table or meta data frame is empty.")
   }
@@ -247,8 +247,7 @@ resampleRNORM <- function(table, meta, multiple) {
 
   group1 <- groups[1]
   group2 <- groups[2]
-  # log transform dataset before resample
-  table<-log10(table+1)
+
   # Function to calculate mean and sd for each group
   calculateMeanSd <- function(z) {
     g1 <- unlist(z[meta$conditions == group1])
@@ -261,23 +260,40 @@ resampleRNORM <- function(table, meta, multiple) {
   MeanSd_table <- as.data.frame(MeanSd_table)
   rownames(MeanSd_table) <- rownames(table)
 
+  # Rejection sampling helper
+  resample_bounded <- function(n, mean, sd, lower, upper) {
+    x <- numeric(n)
+    i <- 1
+    while (i <= n) {
+      val <- rnorm(1, mean, sd)
+      if (val >= lower && val <= upper) {
+        x[i] <- val
+        i <- i + 1
+      }
+    }
+    return(x)
+  }
+
   # Function to generate resampled counts for each row
   resample_counts <- function(row_index) {
-    z <- table[row_index,]
-    g1 <- unlist(z[meta$conditions == group1])
-    g2 <- unlist(z[meta$conditions == group2])
+    z <- table[row_index, ]
+    g1_n <- sum(meta$conditions == group1)
+    g2_n <- sum(meta$conditions == group2)
 
-    ng1 <- rnorm(n = length(g1), mean = MeanSd_table[row_index, "mean1"], sd = sqrt(multiple * (MeanSd_table[row_index, "sd1"])^2))
-    ng2 <- rnorm(n = length(g2), mean = MeanSd_table[row_index, "mean2"], sd = sqrt(multiple * (MeanSd_table[row_index, "sd2"])^2))
+    mean1 <- MeanSd_table[row_index, "mean1"]
+    mean2 <- MeanSd_table[row_index, "mean2"]
+    sd1   <- MeanSd_table[row_index, "sd1"]
+    sd2   <- MeanSd_table[row_index, "sd2"]
 
-    c(ng1, ng2)
+    new_g1 <- resample_bounded(g1_n, mean1, sqrt(multiple * sd1^2), lower, upper)
+    new_g2 <- resample_bounded(g2_n, mean2, sqrt(multiple * sd2^2), lower, upper)
+
+    return(c(new_g1, new_g2))
   }
 
   # Apply the resampling function to each row
   newT <- t(sapply(seq_len(nrow(table)), resample_counts))
-  # de-log counts table
-  newT<- 10 ^ (newT) - 1
-  newT<-newT + abs(min(newT))
+
   # Set column and row names
   colnames(newT) <- c(rownames(meta)[meta$conditions == group1], rownames(meta)[meta$conditions == group2])
   newT <- newT[, colnames(table)]
@@ -289,12 +305,11 @@ resampleRNORM <- function(table, meta, multiple) {
 }
 
 #' Function to resample counts table (whole taxon) with multiple (Rnorm)
-resampleWholeTaxonRNORM <- function(table, meta, multiple) {
+resampleWholeTaxonRNORM <- function(table, meta, multiple, lower = 0, upper = 1e6) {
   if (nrow(table) == 0 || nrow(meta) == 0) {
     stop("Input table or meta data frame is empty.")
   }
-  # log transform dataset before resample
-  table<-log10(table+1)
+
   # Function to calculate mean and sd for each group
   calculateMeanSd <- function(z) {
     c(meanTotal = mean(z), sdTotal = sd(z))
@@ -305,13 +320,30 @@ resampleWholeTaxonRNORM <- function(table, meta, multiple) {
   MeanSd_table <- as.data.frame(MeanSd_table)
   rownames(MeanSd_table) <- rownames(table)
 
+  # Rejection sampling helper
+  resample_bounded <- function(n, mean, sd, lower, upper) {
+    x <- numeric(n)
+    i <- 1
+    while (i <= n) {
+      val <- rnorm(1, mean, sd)
+      if (val >= lower && val <= upper) {
+        x[i] <- val
+        i <- i + 1
+      }
+    }
+    return(x)
+  }
+
   # Function to generate resampled counts for each row
   resample_counts <- function(row_index) {
     z <- table[row_index,]
-
+    n <- ncol(table)
+    nz <- resample_bounded(n, MeanSd_table[row_index, "meanTotal"],
+                           sqrt(multiple * (MeanSd_table[row_index, "sdTotal"])^2),
+                           lower, upper)
     nz <- rnorm(n = length(z), mean = MeanSd_table[row_index, "meanTotal"], sd = sqrt(multiple * (MeanSd_table[row_index, "sdTotal"])^2))
 
-    nz
+    return(nz)
   }
 
   # Apply the resampling function to each row
