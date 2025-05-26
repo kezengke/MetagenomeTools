@@ -235,7 +235,7 @@ calcMeanStd<- function(table, meta) {
 }
 
 #' Function to resample counts table with multiple (Rnorm)
-resampleRNORM <- function(table, meta, multiple, lower = 0, upper = 1e6) {
+resampleRNORM <- function(table, meta, multiple, lower = 0, upper = log10(1e6)) {
   if (nrow(table) == 0 || nrow(meta) == 0) {
     stop("Input table or meta data frame is empty.")
   }
@@ -247,6 +247,9 @@ resampleRNORM <- function(table, meta, multiple, lower = 0, upper = 1e6) {
 
   group1 <- groups[1]
   group2 <- groups[2]
+
+  # Log transform
+  log_table <- log10(table + 1)
 
   # Function to calculate mean and sd for each group
   calculateMeanSd <- function(z) {
@@ -294,6 +297,11 @@ resampleRNORM <- function(table, meta, multiple, lower = 0, upper = 1e6) {
   # Apply the resampling function to each row
   newT <- t(sapply(seq_len(nrow(table)), resample_counts))
 
+  # De-log
+  newT <- 10^newT - 1
+  # In case for negative numbers
+  newT <- newT + 1
+
   # Set column and row names
   colnames(newT) <- c(rownames(meta)[meta$conditions == group1], rownames(meta)[meta$conditions == group2])
   newT <- newT[, colnames(table)]
@@ -305,10 +313,13 @@ resampleRNORM <- function(table, meta, multiple, lower = 0, upper = 1e6) {
 }
 
 #' Function to resample counts table (whole taxon) with multiple (Rnorm)
-resampleWholeTaxonRNORM <- function(table, meta, multiple, lower = 0, upper = 1e6) {
+resampleWholeTaxonRNORM <- function(table, meta, multiple, lower = 0, upper = log10(1e6)) {
   if (nrow(table) == 0 || nrow(meta) == 0) {
     stop("Input table or meta data frame is empty.")
   }
+
+  # Log transform
+  log_table <- log10(table + 1)
 
   # Function to calculate mean and sd for each group
   calculateMeanSd <- function(z) {
@@ -348,7 +359,10 @@ resampleWholeTaxonRNORM <- function(table, meta, multiple, lower = 0, upper = 1e
 
   # Apply the resampling function to each row
   newT <- t(sapply(seq_len(nrow(table)), resample_counts))
-
+  # De-log
+  newT <- 10^newT - 1
+  # In case for negative numbers
+  newT <- newT + 1
   # Set column and row names
   colnames(newT) <- colnames(table)
   newT <- newT[, colnames(table)]
