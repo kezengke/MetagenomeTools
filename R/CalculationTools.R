@@ -265,7 +265,9 @@ resampleRNORM <- function(table, meta, multiple) {
     ng1 <- rnorm(n = length(g1), mean = MeanSd_table[row_index, "mean1"], sd = sqrt(multiple * (MeanSd_table[row_index, "sd1"])^2))
     ng2 <- rnorm(n = length(g2), mean = MeanSd_table[row_index, "mean2"], sd = sqrt(multiple * (MeanSd_table[row_index, "sd2"])^2))
 
-    c(ng1, ng2)
+    newZ<-c(ng1, ng2)
+    newZ<-newZ + abs(min(newZ))
+    return(newZ)
   }
 
   # Apply the resampling function to each row
@@ -279,7 +281,7 @@ resampleRNORM <- function(table, meta, multiple) {
   # # Replace negative values with 0 and round to integer
   # newT[newT < 0] <- 0
   # Add smallest number to whole counts table
-  newT<-newT + abs(min(newT))
+  # newT<-newT + abs(min(newT))
   newT <- data.frame(round(newT, digits = 0), check.names = F)
 
   return(newT)
@@ -307,7 +309,7 @@ resampleWholeTaxonRNORM <- function(table, meta, multiple) {
 
     nz <- rnorm(n = length(z), mean = MeanSd_table[row_index, "meanTotal"], sd = sqrt(multiple * (MeanSd_table[row_index, "sdTotal"])^2))
 
-    nz
+    nz<-nz+abs(min(nz))
   }
 
   # Apply the resampling function to each row
@@ -321,7 +323,7 @@ resampleWholeTaxonRNORM <- function(table, meta, multiple) {
   # # Replace negative values with 0 and round to integer
   # newT[newT < 0] <- 0
   # Add smallest number to whole counts table
-  newT<-newT + abs(min(newT))
+  # newT<-newT + abs(min(newT))
   newT <- data.frame(round(newT, digits = 0), check.names = F)
 
   return(newT)
