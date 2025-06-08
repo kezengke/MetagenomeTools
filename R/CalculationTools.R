@@ -364,11 +364,11 @@ resampleRNBINOM <- function(table, meta, multiple) {
     n1<-length(g1)
     n2<-length(g2)
 
-    r1<-((MeanSd_table[i, 1])^2)/((MeanSd_table[i, 3])^2-MeanSd_table[i, 1])
-    p1<-r1/(r1+(MeanSd_table[i, 1]))
+    r1<-((MeanSd_table[row_index, 1])^2)/(((MeanSd_table[row_index, 3])^2)-MeanSd_table[row_index, 1])
+    p1<-r1/(r1+(MeanSd_table[row_index, 1]))
 
-    r2<-((MeanSd_table[i, 2])^2)/((MeanSd_table[i, 4])^2-MeanSd_table[i, 2])
-    p2<-r2/(r2+(MeanSd_table[i, 2]))
+    r2<-((MeanSd_table[row_index, 2])^2)/(((MeanSd_table[row_index, 4])^2)-MeanSd_table[row_index, 2])
+    p2<-r2/(r2+(MeanSd_table[row_index, 2]))
 
     ng1<-rnbinom(n = n1, size = r1,  prob = p1)
     ng2<-rnbinom(n = n2, size = r2,  prob = p2)
