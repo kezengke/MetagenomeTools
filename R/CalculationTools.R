@@ -344,16 +344,18 @@ resampleRNBINOM <- function(table, meta, multiple) {
   group2 <- groups[2]
 
   # Function to calculate mean and sd for each group
-  calculateMeanSd <- function(z) {
+  calculateMeanVar <- function(z) {
     g1 <- unlist(z[meta$conditions == group1])
     g2 <- unlist(z[meta$conditions == group2])
-    c(mean1 = mean(g1), mean2 = mean(g2), sd1 = sd(g1), sd2 = sd(g2))
+    c(mean1 = mean(g1), mean2 = mean(g2), var1 = var(g1), var2 = var(g2))
   }
 
   # Apply the function to each row of the table and combine results into a data frame
-  MeanSd_table <- t(apply(table, 1, calculateMeanSd))
-  MeanSd_table <- as.data.frame(MeanSd_table)
-  rownames(MeanSd_table) <- rownames(table)
+  MeanVar_table <- t(apply(table, 1, calculateMeanVar))
+  MeanVar_table <- as.data.frame(MeanVar_table)
+  rownames(MeanVar_table) <- rownames(table)
+
+  exclude<-which(MeanVar_table$var1 < MeanVar_table$mean1 | MeanVar_table$var2 < MeanVar_table$mean2)
 
   # Function to generate resampled counts for each row
   resample_counts <- function(row_index) {
@@ -364,17 +366,21 @@ resampleRNBINOM <- function(table, meta, multiple) {
     n1<-length(g1)
     n2<-length(g2)
 
-    r1<-((MeanSd_table[row_index, 1])^2)/(((MeanSd_table[row_index, 3])^2)-MeanSd_table[row_index, 1])
-    p1<-r1/(r1+(MeanSd_table[row_index, 1]))
+    r1<-((MeanVar_table[row_index, 1])^2)/((MeanVar_table[row_index, 3])-MeanVar_table[row_index, 1])
+    p1<-r1/(r1+(MeanVar_table[row_index, 1]))
 
-    r2<-((MeanSd_table[row_index, 2])^2)/(((MeanSd_table[row_index, 4])^2)-MeanSd_table[row_index, 2])
-    p2<-r2/(r2+(MeanSd_table[row_index, 2]))
+    r2<-((MeanVar_table[row_index, 2])^2)/((MeanVar_table[row_index, 4])-MeanVar_table[row_index, 2])
+    p2<-r2/(r2+(MeanVar_table[row_index, 2]))
 
     ng1<-rnbinom(n = n1, size = r1,  prob = p1)
     ng2<-rnbinom(n = n2, size = r2,  prob = p2)
 
     newZ<-c(ng1, ng2)
     return(newZ)
+  }
+
+  if(length(exclude)>0){
+    table<-table[-exclude, , drop = F]
   }
 
   # Apply the resampling function to each row
