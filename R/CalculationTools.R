@@ -381,6 +381,7 @@ resampleRNBINOM <- function(table, meta, multiple) {
 
   if(length(exclude)>0){
     table<-table[-exclude, , drop = F]
+    MeanVar_table<-MeanVar_table[-exclude, , drop = F]
   }
 
   # Apply the resampling function to each row
