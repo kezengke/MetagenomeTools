@@ -310,6 +310,8 @@ resampleWholeTaxonRNORM <- function(table, meta, multiple) {
     nz <- rnorm(n = length(z), mean = MeanSd_table[row_index, "meanTotal"], sd = sqrt(multiple * (MeanSd_table[row_index, "sdTotal"])^2))
 
     nz<-nz+abs(min(nz))
+
+    return(nz)
   }
 
   # Apply the resampling function to each row
@@ -394,6 +396,53 @@ resampleRNBINOM <- function(table, meta, multiple) {
   newT <- newT[, colnames(table)]
   rownames(newT) <- rownames(table)
 
+  newT <- data.frame(round(newT, digits = 0), check.names = F)
+
+  return(newT)
+}
+
+#' Function to resample counts table (whole taxon) with multiple (Rnbinom)
+resampleWholeTaxonRNBINOM <- function(table, meta, multiple) {
+  if (nrow(table) == 0 || nrow(meta) == 0) {
+    stop("Input table or meta data frame is empty.")
+  }
+
+  # Function to calculate mean and sd for each group
+  calculateMeanVar <- function(z) {
+    c(meanTotal = mean(z), varTotal = var(z))
+  }
+
+  # Apply the function to each row of the table and combine results into a data frame
+  MeanVar_table <- t(apply(table, 1, calculateMeanVar))
+  MeanVar_table <- as.data.frame(MeanVar_table)
+  rownames(MeanVar_table) <- rownames(table)
+
+  # Function to generate resampled counts for each row
+  resample_counts <- function(row_index) {
+    z <- table[row_index,]
+
+    n<-length(z)
+
+    r<-((MeanVar_table[row_index, 1])^2)/((MeanVar_table[row_index, 2])-MeanVar_table[row_index, 1])
+    p<-r/(r+(MeanVar_table[row_index, 1]))
+
+    nz<-rnbinom(n = n, size = r,  prob = p)
+
+    return(nz)
+  }
+
+  # Apply the resampling function to each row
+  newT <- t(sapply(seq_len(nrow(table)), resample_counts))
+
+  # Set column and row names
+  colnames(newT) <- colnames(table)
+  newT <- newT[, colnames(table)]
+  rownames(newT) <- rownames(table)
+
+  # # Replace negative values with 0 and round to integer
+  # newT[newT < 0] <- 0
+  # Add smallest number to whole counts table
+  # newT<-newT + abs(min(newT))
   newT <- data.frame(round(newT, digits = 0), check.names = F)
 
   return(newT)
