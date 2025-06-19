@@ -417,7 +417,7 @@ resampleWholeTaxonRNBINOM <- function(table, meta, multiple) {
   MeanVar_table <- as.data.frame(MeanVar_table)
   rownames(MeanVar_table) <- rownames(table)
 
-  exclude<-which(MeanVar_table$var < MeanVar_table$mean)
+  exclude<-which(MeanVar_table$varTotal < MeanVar_table$meanTotal)
   # Function to generate resampled counts for each row
   resample_counts <- function(row_index) {
     z <- table[row_index,]
