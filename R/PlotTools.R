@@ -102,6 +102,7 @@ Log10PvPPlot <- function(results1, results2, method1, method2, title = "Default 
                     "edgeR" = "#94c6d4",
                     "ALDEx2t-test" = "#5d879e",
                     "ALDEx2Wilcoxon" = "#4863aa",
+                    "ANCOMBC2" = "#548B54",
                     "Both" = "#a24c97",
                     "Neither" = "#cdda73",
 
