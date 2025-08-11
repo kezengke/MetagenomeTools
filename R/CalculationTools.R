@@ -194,7 +194,7 @@ calcANCOMBC2 <- function(table, meta) {
     data         = ps,
     fix_formula  = names(meta),
     p_adj_method = "holm",
-    prv_cut      = 0.10,
+    prv_cut      = 0,
     lib_cut      = 0,
     s0_perc      = 0.05,
     alpha        = 0.05
