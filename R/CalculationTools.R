@@ -2,6 +2,8 @@ library(DESeq2)
 library(edgeR)
 library(coin)
 library(ALDEx2)
+library(phyloseq)
+library(ANCOMBC)
 
 #' Load in counts table
 LoadCountsT <- function(filePath) {
@@ -177,6 +179,33 @@ calcALDEx2Wilcoxon <- function(table, meta) {
   colnames(aldex2W_results)<-c("stats", "pval")
   aldex2W_results<-data.frame(aldex2W_results, check.names = F)
   return(aldex2W_results)
+}
+
+#' Function to calculate ANCOMBC2 results
+calcANCOMBC2 <- function(table, meta) {
+  meta$conditions<-factor(meta$conditions, levels = unique(meta$conditions))
+
+  ps <- phyloseq(
+    otu_table(table, taxa_are_rows = TRUE),
+    sample_data(meta)
+  )
+
+  out <- ancombc2(
+    data         = ps,
+    fix_formula  = names(meta),
+    p_adj_method = "holm",
+    prv_cut      = 0.10,
+    lib_cut      = 0,
+    s0_perc      = 0.05,
+    alpha        = 0.05
+  )
+
+  res <- out$res
+  ancombc2_results <- data.frame(res[, 7, drop = F], res[, 9, drop = F])
+  colnames(ancombc2_results)<-c("stats", "pval")
+  rownames(ancombc2_results)<-rownames(table)
+
+  return(ancombc2_results)
 }
 
 #' Function to generate Log10 p-values and assign test statistics directions
