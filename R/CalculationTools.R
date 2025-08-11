@@ -203,6 +203,8 @@ calcANCOMBC2 <- function(table, meta) {
   res <- out$res
   ancombc2_results <- data.frame(res[, 7, drop = F], res[, 9, drop = F])
   colnames(ancombc2_results)<-c("stats", "pval")
+
+  ancombc2_results$stats[is.na(ancombc2_results)] <- 1
   rownames(ancombc2_results)<-rownames(table)
 
   return(ancombc2_results)
