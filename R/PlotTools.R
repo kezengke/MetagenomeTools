@@ -60,9 +60,9 @@ processEdgeRRes <- function(edger_results) {
   return(edger_results)
 }
 
-#' Function to assign directions to log10 pvalues of edgeR
+#' Function to assign directions to log10 pvalues of ALDEx2
 processALDEx2Res <- function(aldex2_results) {
-  #creating log10 pvalues for edgeR results
+  #creating log10 pvalues for ALDEx2 results
   aldex2_results$direction<-aldex2_results$stats/abs(aldex2_results$stats)
   #log10 pvals
   aldex2_results$logP<-log10(aldex2_results$pval)
@@ -71,6 +71,29 @@ processALDEx2Res <- function(aldex2_results) {
   aldex2_results$p_directed<-aldex2_results$p_directed*-1
 
   return(aldex2_results)
+}
+
+#' Function to assign directions to log10 pvalues of ANCOMBC2
+processANCOMBC2Res <- function(ancombc2_results) {
+  #creating log10 pvalues for ANCOMBC2 results
+  ancombc2_results$direction<-ancombc2_results$stats/abs(ancombc2_results$stats)
+  #log10 pvals
+  ancombc2_results$logP<-log10(ancombc2_results$pval)
+  #pval with direction
+  ancombc2_results$p_directed<-ancombc2_results$direction*ancombc2_results$logP
+  ancombc2_results$p_directed<-ancombc2_results$p_directed*-1
+
+  # for ancombc2 0 p-value outputs
+  maxPosIndx<-which(ancombc2_results$direction>0 & ancombc2_results$pval == 0)
+  minNegIndx<-which(ancombc2_results$direction<0 & ancombc2_results$pval == 0)
+
+  maxPosP<-max(ancombc2_results$p_directed[ancombc2_results$p_directed < Inf])
+  minNegP<-min(ancombc2_results$p_directed[ancombc2_results$p_directed > -Inf])
+
+  ancombc2_results$p_directed[maxPosIndx]<-maxPosP + (maxPosP * 1e-6)
+  ancombc2_results$p_directed[minNegIndx]<-minNegP + (minNegP * 1e-6)
+
+  return(ancombc2_results)
 }
 
 
