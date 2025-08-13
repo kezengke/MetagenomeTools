@@ -4,6 +4,7 @@ library(coin)
 library(ALDEx2)
 library(phyloseq)
 library(ANCOMBC)
+library(metagenomeSeq)
 
 #' Load in counts table
 LoadCountsT <- function(filePath) {
@@ -69,8 +70,9 @@ calcTtest2 <- function(table, meta) {
 }
 
 calcTtest <- function(table, meta) {
-  t_stats<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$stat})
-  t_test_p<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$p.value})
+  grp <- factor(as.character(meta$conditions))
+  t_stats  <- apply(table, 1, function(x) t.test(unlist(x) ~ grp)$statistic)
+  t_test_p <- apply(table, 1, function(x) t.test(unlist(x) ~ grp)$p.value)
 
   t_results<-cbind(t_stats, t_test_p)
   rownames(t_results)<-rownames(table)
@@ -81,8 +83,9 @@ calcTtest <- function(table, meta) {
 
 #' Function to calculate Wilcoxon results
 calcWilcox <- function(table, meta) {
-  wilcox_stats<-apply(table, 1, function(x){statistic(wilcox_test(unlist(x)~factor(meta$conditions)))})
-  wilcox_p<-apply(table, 1, function(x){pvalue(wilcox_test(unlist(x)~factor(meta$conditions)))})
+  grp <- factor(as.character(meta$conditions))
+  wilcox_stats<-apply(table, 1, function(x){statistic(wilcox_test(unlist(x) ~ grp))})
+  wilcox_p<-apply(table, 1, function(x){pvalue(wilcox_test(unlist(x) ~ grp))})
 
   wilcox_results<-cbind(wilcox_stats, wilcox_p)
   rownames(wilcox_results)<-rownames(table)
@@ -208,6 +211,23 @@ calcANCOMBC2 <- function(table, meta) {
   rownames(ancombc2_results)<-rownames(table)
 
   return(ancombc2_results)
+}
+
+#' Function to calculate metagenomeSeq results
+calcMetagenomeSeq <- function(table, meta) {
+  meta<-AnnotatedDataFrame(meta)
+  obj<-newMRexperiment(table, phenoData = meta)s
+  percentile<-cumNormStatFast(obj)
+  obj<-cumNorm(obj, p = percentile)
+  pd<-pData(obj)
+  mod<-model.matrix(~1 + condition, data = pd)
+  res<-fitFeatureModel(obj, mod)
+
+  mtgnms_results<-cbind(res@fitZeroLogNormal$logFC, res@pvalues)
+  rownames(mtgnms_results)<-rownames(table)
+  colnames(mtgnms_results)<-c("stats", "pval")
+  mtgnms_results<-data.frame(mtgnms_results, check.names = F)
+  return(mtgnms_results)
 }
 
 #' Function to generate Log10 p-values and assign test statistics directions

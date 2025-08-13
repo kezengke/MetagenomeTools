@@ -126,6 +126,7 @@ Log10PvPPlot <- function(results1, results2, method1, method2, title = "Default 
                     "ALDEx2t-test" = "#5d879e",
                     "ALDEx2Wilcoxon" = "#4863aa",
                     "ANCOMBC2" = "#548B54",
+                    "metagenomeSeq" = "#CD919E",
                     "Both" = "#a24c97",
                     "Neither" = "#cdda73",
 
