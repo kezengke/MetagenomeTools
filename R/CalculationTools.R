@@ -216,7 +216,7 @@ calcANCOMBC2 <- function(table, meta) {
 #' Function to calculate metagenomeSeq results
 calcMetagenomeSeq <- function(table, meta) {
   meta<-AnnotatedDataFrame(meta)
-  obj<-newMRexperiment(table, phenoData = meta)s
+  obj<-newMRexperiment(table, phenoData = meta)
   percentile<-cumNormStatFast(obj)
   obj<-cumNorm(obj, p = percentile)
   pd<-pData(obj)
