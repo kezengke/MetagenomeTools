@@ -32,7 +32,7 @@ processDESeq2Res <- function(deseq_results) {
   deseq_results$logP<-log10(deseq_results$pval)
   #pval with direction
   deseq_results$p_directed<-deseq_results$direction*deseq_results$logP
-  # deseq_results$p_directed<-deseq_results$p_directed*-1
+  deseq_results$p_directed<-deseq_results$p_directed*-1
 
   # for deseq2 0 p-value outputs
   maxPosIndx<-which(deseq_results$direction>0 & deseq_results$pval == 0)
@@ -55,7 +55,7 @@ processEdgeRRes <- function(edger_results) {
   edger_results$logP<-log10(edger_results$pval)
   #pval with direction
   edger_results$p_directed<-edger_results$direction*edger_results$logP
-  # edger_results$p_directed<-edger_results$p_directed*-1
+  edger_results$p_directed<-edger_results$p_directed*-1
 
   return(edger_results)
 }
@@ -68,7 +68,7 @@ processALDEx2Res <- function(aldex2_results) {
   aldex2_results$logP<-log10(aldex2_results$pval)
   #pval with direction
   aldex2_results$p_directed<-aldex2_results$direction*aldex2_results$logP
-  # aldex2_results$p_directed<-aldex2_results$p_directed*-1
+  aldex2_results$p_directed<-aldex2_results$p_directed*-1
 
   return(aldex2_results)
 }
@@ -81,7 +81,7 @@ processANCOMBC2Res <- function(ancombc2_results) {
   ancombc2_results$logP<-log10(ancombc2_results$pval)
   #pval with direction
   ancombc2_results$p_directed<-ancombc2_results$direction*ancombc2_results$logP
-  # ancombc2_results$p_directed<-ancombc2_results$p_directed*-1
+  ancombc2_results$p_directed<-ancombc2_results$p_directed*-1
 
   # for ancombc2 0 p-value outputs
   maxPosIndx<-which(ancombc2_results$direction>0 & ancombc2_results$pval == 0)
@@ -104,7 +104,7 @@ processMetagenomeSeqRes <- function(metagenomeseq_results) {
   metagenomeseq_results$logP<-log10(metagenomeseq_results$pval)
   #pval with direction
   metagenomeseq_results$p_directed<-metagenomeseq_results$direction*metagenomeseq_results$logP
-  # metagenomeseq_results$p_directed<-metagenomeseq_results$p_directed*-1
+  metagenomeseq_results$p_directed<-metagenomeseq_results$p_directed*-1
 
   return(metagenomeseq_results)
 }
