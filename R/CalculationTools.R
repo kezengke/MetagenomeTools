@@ -70,9 +70,11 @@ calcTtest2 <- function(table, meta) {
 }
 
 calcTtest <- function(table, meta) {
-  grp <- factor(as.character(meta$conditions))
-  t_stats  <- apply(table, 1, function(x) t.test(unlist(x) ~ grp)$statistic)
-  t_test_p <- apply(table, 1, function(x) t.test(unlist(x) ~ grp)$p.value)
+  group<-unique(meta$conditions)
+  meta$conditions<-ifelse(meta$conditions == group[1], "group1", "group2")
+
+  t_stats<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$stat})
+  t_test_p<-apply(table, 1, function(x){t.test(unlist(x)~meta$conditions)$p.value})
 
   t_results<-cbind(t_stats, t_test_p)
   rownames(t_results)<-rownames(table)
@@ -83,9 +85,11 @@ calcTtest <- function(table, meta) {
 
 #' Function to calculate Wilcoxon results
 calcWilcox <- function(table, meta) {
-  grp <- factor(as.character(meta$conditions))
-  wilcox_stats<-apply(table, 1, function(x){statistic(wilcox_test(unlist(x) ~ grp))})
-  wilcox_p<-apply(table, 1, function(x){pvalue(wilcox_test(unlist(x) ~ grp))})
+  group<-unique(meta$conditions)
+  meta$conditions<-ifelse(meta$conditions == group[1], "group1", "group2")
+
+  wilcox_stats<-apply(table, 1, function(x){statistic(wilcox_test(unlist(x)~factor(meta$conditions)))})
+  wilcox_p<-apply(table, 1, function(x){pvalue(wilcox_test(unlist(x)~factor(meta$conditions)))})
 
   wilcox_results<-cbind(wilcox_stats, wilcox_p)
   rownames(wilcox_results)<-rownames(table)
@@ -96,6 +100,9 @@ calcWilcox <- function(table, meta) {
 
 #' Function to calculate DESeq2 results
 calcDESeq2 <- function(table, meta) {
+  group<-unique(meta$conditions)
+  meta$conditions<-ifelse(meta$conditions == group[1], "group1", "group2")
+
   #solve deseq2 all 0 issue
   table<-table+1
 
@@ -128,6 +135,8 @@ calcDESeq2 <- function(table, meta) {
 
 #' Function to calculate edgeR results
 calcEdgeR <- function(table, meta) {
+  group<-unique(meta$conditions)
+  meta$conditions<-ifelse(meta$conditions == group[1], "group1", "group2")
   group <- meta$condition
   dgList <- DGEList(counts=table, group = group)
   dgList <- calcNormFactors(dgList, method="TMM")
@@ -158,6 +167,8 @@ calcEdgeR <- function(table, meta) {
 
 #' Function to calculate ALDEx2 t-test results
 calcALDEx2Ttest <- function(table, meta) {
+  group<-unique(meta$conditions)
+  meta$conditions<-ifelse(meta$conditions == group[1], "group1", "group2")
   CLR<-aldex.clr(table, meta$conditions, mc.samples = 128, denom = "all", verbose = F, gamma = 0.5)
   results<-aldex.ttest(CLR, hist.plot = F, paired.test = F, verbose = F)
   effectSizes<-aldex.effect(CLR)
@@ -172,6 +183,8 @@ calcALDEx2Ttest <- function(table, meta) {
 
 #' Function to calculate ALDEx2 wilcoxon results
 calcALDEx2Wilcoxon <- function(table, meta) {
+  group<-unique(meta$conditions)
+  meta$conditions<-ifelse(meta$conditions == group[1], "group1", "group2")
   CLR<-aldex.clr(table, meta$conditions, mc.samples = 128, denom = "all", verbose = F, gamma = 0.5)
   results<-aldex.ttest(CLR, hist.plot = F, paired.test = F, verbose = F)
   effectSizes<-aldex.effect(CLR)
@@ -186,6 +199,8 @@ calcALDEx2Wilcoxon <- function(table, meta) {
 
 #' Function to calculate ANCOMBC2 results
 calcANCOMBC2 <- function(table, meta) {
+  group<-unique(meta$conditions)
+  meta$conditions<-ifelse(meta$conditions == group[1], "group1", "group2")
   meta$conditions<-factor(meta$conditions, levels = unique(meta$conditions))
 
   ps <- phyloseq(
@@ -215,6 +230,8 @@ calcANCOMBC2 <- function(table, meta) {
 
 #' Function to calculate metagenomeSeq results
 calcMetagenomeSeq <- function(table, meta) {
+  group<-unique(meta$conditions)
+  meta$conditions<-ifelse(meta$conditions == group[1], "group1", "group2")
   meta<-AnnotatedDataFrame(meta)
   obj<-newMRexperiment(table, phenoData = meta)
   percentile<-cumNormStatFast(obj)
