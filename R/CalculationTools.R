@@ -237,7 +237,7 @@ calcMetagenomeSeq <- function(table, meta) {
   percentile<-cumNormStatFast(obj)
   obj<-cumNorm(obj, p = percentile)
   pd<-pData(obj)
-  mod<-model.matrix(~1 + condition, data = pd)
+  mod<-model.matrix(~1 + conditions, data = pd)
   res<-fitFeatureModel(obj, mod)
 
   mtgnms_results<-cbind(res@fitZeroLogNormal$logFC, res@pvalues)
