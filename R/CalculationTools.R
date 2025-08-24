@@ -244,6 +244,7 @@ calcMetagenomeSeq <- function(table, meta) {
   rownames(mtgnms_results)<-rownames(table)
   colnames(mtgnms_results)<-c("stats", "pval")
   mtgnms_results<-data.frame(mtgnms_results, check.names = F)
+  mtgnms_results$pval[is.na(mtgnms_results$pval)] <- 1
   return(mtgnms_results)
 }
 
